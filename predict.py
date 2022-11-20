@@ -11,7 +11,7 @@ from diffusers import StableDiffusionPipeline
 MODEL_CACHE = "diffusers-cache"
 
 
-class Output(BaseModel):
+class FilterOutput(BaseModel):
     nsfw_detected: bool
     nsfw: List[str]
     special: List[str]
@@ -39,7 +39,7 @@ class Predictor(BasePredictor):
         image: Path = Input(
             description="Image to run through the NSFW filter",
         ),
-    ) -> Output:
+    ) -> FilterOutput:
         """Run the provided image through the NSFW filter"""
 
         image = Image.open(image)
@@ -51,4 +51,4 @@ class Predictor(BasePredictor):
             clip_input=safety_checker_input.pixel_values, images=image
         )
 
-        return Output(nsfw_detected=has_nsfw_concepts, nsfw=result["nsfw"], special=result["special"])
+        return FilterOutput(nsfw_detected=has_nsfw_concepts, nsfw=result["nsfw"], special=result["special"])
